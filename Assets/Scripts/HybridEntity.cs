@@ -10,6 +10,10 @@ using SphereCollider = Unity.Physics.SphereCollider;
 using Unity.Physics.Authoring;
 using Unity.Mathematics;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 [SelectionBase]
 public class HybridEntity : MonoBehaviour
 {
@@ -45,6 +49,7 @@ public class HybridEntity : MonoBehaviour
         entityManager.AddComponentObject(entity, transform);
     }
 
+    #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         // range-radius
@@ -53,5 +58,13 @@ public class HybridEntity : MonoBehaviour
         // range AABB
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(transform.position, new Vector3(10, 1, 10) * 2);
+
+        // number of colliders around
+        if(Application.isPlaying)
+        {
+            var around = entityManager.GetComponentData<EntitiesAroundCountCmp>(entity);
+            Handles.Label(transform.position, around.count.ToString());
+        }
     }
+    #endif
 }
